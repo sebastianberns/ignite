@@ -48,3 +48,24 @@ def test_compute_batch_images():
     acc.update((y_pred, y))
     assert isinstance(acc.compute(), float)
     assert acc.compute() == 0.75
+
+
+def test_threshold():
+    accA = BinaryAccuracy(0.4)
+    accB = BinaryAccuracy(0.7)
+
+    y_pred = torch.FloatTensor([0.2, 0.4, 0.6, 0.8])
+    y = torch.ones(4).type(torch.LongTensor)
+    accA.update((y_pred, y))
+    accB.update((y_pred, y))
+    assert accA.compute() == 0.5
+    assert accB.compute() == 0.25
+
+    accA.reset()
+    accB.reset()
+    y_pred = torch.FloatTensor([0.2, 0.7, 0.8, 0.9])
+    y = torch.ones(4).type(torch.LongTensor)
+    accA.update((y_pred, y))
+    accB.update((y_pred, y))
+    assert accA.compute() == 0.75
+    assert accB.compute() == 0.5
